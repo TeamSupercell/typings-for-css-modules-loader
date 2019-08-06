@@ -2,9 +2,13 @@
 
 Webpack loader that works as a css-loader drop-in replacement to generate TypeScript typings for CSS modules on the fly
 
+## Disclaimer
+
+This repository is a fork of the unmaintained https://github.com/Jimdo/typings-for-css-modules-loader repository.
+
 ## Installation
 
-Install via npm `npm install --save-dev typings-for-css-modules-loader`
+Install via npm `npm install --save-dev @teamsupercell/typings-for-css-modules-loader`
 
 ## Options
 
