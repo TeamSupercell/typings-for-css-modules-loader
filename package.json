@@ -51,10 +51,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jimdo/typings-for-css-modules-loader.git"
+    "url": "git+https://github.com/TeamSupercell/typings-for-css-modules-loader.git"
   },
   "bugs": {
-    "url": "https://github.com/Jimdo/typings-for-css-modules-loader/issues"
+    "url": "https://github.com/TeamSupercell/typings-for-css-modules-loader/issues"
   },
-  "homepage": "https://github.com/Jimdo/typings-for-css-modules-loader#readme"
+  "homepage": "https://github.com/TeamSupercell/typings-for-css-modules-loader#readme"
 }
