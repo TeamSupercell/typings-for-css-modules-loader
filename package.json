@@ -1,18 +1,12 @@
 {
   "name": "@teamsupercell/typings-for-css-modules-loader",
-  "version": "1.7.0",
-  "description": "Drop-in replacement for css-loader to generate typings for your CSS-Modules on the fly in webpack",
-  "main": "lib/index.js",
+  "version": "2.0.0",
+  "description": "Webpack loader that generates TypeScript typings for CSS modules from css-loader on the fly",
+  "main": "src/index.js",
   "scripts": {
-    "build": "babel src -d lib",
-    "prepublish": "npm run build",
-    "pretest": "rm -f ./test/example*.css.d.ts",
-    "test:diff": "(cd test; set -e; for f in example*css.d.ts; do diff $f expected-$f; done;)",
-    "test:run": "babel-node ./node_modules/webpack/bin/webpack --config ./test/webpack.config.babel.js",
-    "test:run-twice": "npm run test:run > /dev/null 2>&1 && npm run test:run",
-    "test": "npm run test:run-twice && npm run test:diff"
+    "test": "jest"
   },
-  "author": "Joel",
+  "author": "Tim Sebastian <tim.sebastian@gmail.com>",
   "license": "MIT",
   "keywords": [
     "Typescript",
@@ -27,27 +21,24 @@
     "css modules webpack typings"
   ],
   "dependencies": {
-    "colour": "0.7.1",
-    "graceful-fs": "4.1.4",
-    "loader-utils": "0.2.16"
+    "loader-utils": "1.2.3",
+    "schema-utils": "^2.0.1"
   },
   "devDependencies": {
-    "babel-cli": "6.10.1",
-    "babel-core": "~6.21.0",
-    "babel-eslint": "6.1.0",
-    "babel-loader": "~6.2.5",
-    "babel-polyfill": "~6.13.0",
-    "babel-preset-es2015": "6.9.0",
-    "babel-preset-stage-0": "6.5.0",
-    "css-loader": "~0.26.1",
-    "eslint": "2.13.1",
-    "eslint-plugin-babel": "3.3.0",
-    "ts-loader": "~0.8.2",
-    "typescript": "~1.8.10",
-    "webpack": "~1.13.2"
+    "@types/jest": "^24.0.17",
+    "css-loader": "^3.1.0",
+    "eslint": "3.16.1",
+    "eslint-config-prettier": "^6.0.0",
+    "jest": "^24.8.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.1"
   },
   "peerDependencies": {
-    "css-loader": ">=0.23.1"
+    "css-loader": ">=0.28.11"
+  },
+  "optionalDependencies": {
+    "prettier": "*"
   },
   "repository": {
     "type": "git",
@@ -56,5 +47,13 @@
   "bugs": {
     "url": "https://github.com/TeamSupercell/typings-for-css-modules-loader/issues"
   },
-  "homepage": "https://github.com/TeamSupercell/typings-for-css-modules-loader#readme"
+  "homepage": "https://github.com/TeamSupercell/typings-for-css-modules-loader#readme",
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2017
+    },
+    "extends": [
+      "prettier"
+    ]
+  }
 }

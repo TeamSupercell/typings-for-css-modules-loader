@@ -1,6 +1,4 @@
-.babelrc
-.eslintrc
-.editorconfig
-jsconfig.json
-src
-test
+**/*
+!src/**/*
+!package.json
+!README.md
