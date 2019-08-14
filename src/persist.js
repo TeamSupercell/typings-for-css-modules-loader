@@ -1,21 +1,20 @@
-import fs from 'graceful-fs';
-import os from 'os';
+// @ts-check
+const fs = require("fs");
 
-export const writeToFileIfChanged = (filename, content, options) => {
+/**
+ * @param {string} filename
+ * @param {string} content
+ * @returns {void}
+ */
+module.exports = (filename, content) => {
   if (fs.existsSync(filename)) {
-    const currentInput = fs.readFileSync(filename, 'utf-8');
+    const currentInput = fs.readFileSync(filename, "utf-8");
 
-    if (currentInput !== content) {
-      writeFile(filename, content, options);
+    // compare file contents ignoring whitespace
+    if (currentInput.replace(/\s+/g, "") !== content.replace(/\s+/g, "")) {
+      fs.writeFileSync(filename, content, "utf8");
     }
   } else {
-    writeFile(filename, content, options);
+    fs.writeFileSync(filename, content, "utf8");
   }
-};
-
-const writeFile = (filename, content, options) => {
-  //Replace new lines with OS-specific new lines
-  content = content.replace(/\n/g, options.EOL || os.EOL);
-
-  fs.writeFileSync(filename, content, 'utf8');
 };

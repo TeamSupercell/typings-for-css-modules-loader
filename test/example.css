@@ -5,3 +5,7 @@
 .bar-baz {
   color: green;
 }
+
+.composed {
+  composes: shared-style from "./example-shared.css";
+}

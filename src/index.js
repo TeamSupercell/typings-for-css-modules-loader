@@ -1,92 +1,144 @@
-import cssLoader from 'css-loader';
-import cssLocalsLoader from 'css-loader/locals';
-import loaderUtils from 'loader-utils';
-import 'colour';
-
-import {
-  filterNonWordClasses,
-  filterReservedWordClasses,
-  generateNamedExports,
-  generateGenericExportInterface,
+// @ts-check
+const {
+  filenameToInterfaceName,
   filenameToTypingsFilename,
-} from './cssModuleToInterface';
-import * as persist from './persist';
-import loggerCreator from './logger';
+  getCssModuleKeys,
+  generateGenericExportInterface
+} = require("./utils");
+const persist = require("./persist");
+const { getOptions } = require("loader-utils");
+const validateOptions = require("schema-utils");
 
-function delegateToCssLoader(ctx, input, callback) {
-  ctx.async = () => callback;
-  cssLoader.call(ctx, ...input);
-}
+const schema = {
+  type: "object",
+  properties: {
+    eol: {
+      description:
+        "Newline character to be used in generated d.ts files. Uses OS default. This option is overridden by the formatter option.",
+      type: "string"
+    },
+    banner: {
+      description: "To add a 'banner' prefix to each generated `*.d.ts` file",
+      type: "string"
+    },
+    formatter: {
+      description:
+        "Possible options: none and prettier (requires prettier package installed). Defaults to prettier if `prettier` module can be resolved",
+      enum: ["prettier", "none"]
+    }
+  },
+  additionalProperties: false
+};
 
-module.exports = function(...input) {
-  if(this.cacheable) this.cacheable();
+/** @type {any} */
+const configuration = {
+  name: "typings-for-css-modules-loader",
+  baseDataPath: "options"
+};
 
-  // mock async step 1 - css loader is async, we need to intercept this so we get async ourselves
-  const callback = this.async();
+/** @type {((this: import('webpack').loader.LoaderContext, ...args: any[]) => void) & {pitch?: import('webpack').loader.Loader['pitch']}} */
+module.exports = function(content, ...args) {
+  const options = getOptions(this) || {};
 
-  const query = loaderUtils.parseQuery(this.query);
-  const logger = loggerCreator(query.silent);
+  validateOptions(schema, options, configuration);
 
-  const moduleMode = query.modules || query.module;
-  if (!moduleMode) {
-    logger('warn','Typings for CSS-Modules: option `modules` is not active - skipping extraction work...'.red);
-    return delegateToCssLoader(this, input, callback);
+  if (this.cacheable) {
+    this.cacheable();
   }
 
-  // mock async step 2 - offer css loader a "fake" callback
-  this.async = () => (err, content) => {
-    if (err) {
-      return callback(err);
-    }
-    const filename = this.resourcePath;
-    const cssModuleInterfaceFilename = filenameToTypingsFilename(filename);
+  // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
+  const cssModuleKeys = getCssModuleKeys(
+    content.substring(content.indexOf("exports.locals"))
+  );
 
-    const keyRegex = /"([^\\"]+)":/g;
-    let match;
-    const cssModuleKeys = [];
+  /** @type {any} */
+  const callback = this.async();
 
-    while (match = keyRegex.exec(content)) {
-      if (cssModuleKeys.indexOf(match[1]) < 0) {
-        cssModuleKeys.push(match[1]);
-      }
-    }
-
-    query.orderAlphabetically = !!query.orderAlphabetically;
-
-    let cssModuleDefinition;
-    if (!query.namedExport) {
-      cssModuleDefinition = generateGenericExportInterface(cssModuleKeys, filename, query.orderAlphabetically);
-    } else {
-      const [cleanedDefinitions, skippedDefinitions,] = filterNonWordClasses(cssModuleKeys);
-      if (skippedDefinitions.length > 0 && !query.camelCase) {
-        logger('warn', `Typings for CSS-Modules: option 'namedExport' was set but 'camelCase' for the css-loader not.
-The following classes will not be available as named exports:
-${skippedDefinitions.map(sd => ` - "${sd}"`).join('\n').red}
-`.yellow);
-      }
-
-      const [nonReservedWordDefinitions, reservedWordDefinitions,] = filterReservedWordClasses(cleanedDefinitions);
-      if (reservedWordDefinitions.length > 0) {
-        logger('warn', `Your css contains classes which are reserved words in JavaScript.
-Consequently the following classes will not be available as named exports:
-${reservedWordDefinitions.map(rwd => ` - "${rwd}"`).join('\n').red}
-These can be accessed using the object literal syntax; eg styles['delete'] instead of styles.delete.
-`.yellow);
-      }
-
-      cssModuleDefinition = generateNamedExports(nonReservedWordDefinitions, query.orderAlphabetically);
-    }
-    if (cssModuleDefinition.trim() === '') {
-      // Ensure empty CSS modules export something
-      cssModuleDefinition = 'export {};\n';
-    }
-    if (query.banner) {
-      // Prefix banner to CSS module
-      cssModuleDefinition = query.banner + '\n' + cssModuleDefinition;
-    }
-    persist.writeToFileIfChanged(cssModuleInterfaceFilename, cssModuleDefinition, query);
-    // mock async step 3 - make `async` return the actual callback again before calling the 'real' css-loader
-    delegateToCssLoader(this, input, callback);
+  const successfulCallback = () => {
+    callback(null, content, ...args);
   };
-  cssLocalsLoader.call(this, ...input);
+
+  if (cssModuleKeys.length === 0) {
+    // no css module output found
+    successfulCallback();
+    return;
+  }
+
+  const filename = this.resourcePath;
+
+  const cssModuleInterfaceFilename = filenameToTypingsFilename(filename);
+  const interfaceName = filenameToInterfaceName(filename);
+  const cssModuleDefinition = generateGenericExportInterface(
+    cssModuleKeys,
+    interfaceName
+  );
+
+  applyFormattingAndOptions(cssModuleDefinition, options)
+    .then(output => {
+      persist(cssModuleInterfaceFilename, output);
+    })
+    .catch(err => {
+      this.emitError(err);
+    })
+    .then(successfulCallback);
 };
+
+/**
+ * @param {string} cssModuleDefinition
+ * @param {any} options
+ */
+async function applyFormattingAndOptions(cssModuleDefinition, options) {
+  if (options.banner) {
+    // Prefix banner to CSS module
+    cssModuleDefinition = options.banner + "\n" + cssModuleDefinition;
+  }
+
+  if (
+    options.formatter === "prettier" ||
+    (!options.formatter && canUsePrettier())
+  ) {
+    cssModuleDefinition = await applyPrettier(cssModuleDefinition);
+  } else {
+    // at very least let's ensure we're using OS eol if it's not provided
+    cssModuleDefinition = cssModuleDefinition.replace(
+      /\r?\n/g,
+      options.eol || require("os").EOL
+    );
+  }
+
+  return cssModuleDefinition;
+}
+
+/**
+ * @param {string} input
+ * @returns {Promise<string>}
+ */
+async function applyPrettier(input) {
+  const prettier = require("prettier");
+
+  const config = await prettier.resolveConfig("./", {
+    editorconfig: true
+  });
+
+  return prettier.format(
+    input,
+    Object.assign({}, config, { parser: "typescript" })
+  );
+}
+
+let isPrettierInstalled;
+/**
+ * @returns {boolean}
+ */
+function canUsePrettier() {
+  if (typeof isPrettierInstalled !== "boolean") {
+    try {
+      require.resolve("prettier");
+      isPrettierInstalled = true;
+    } catch (_) {
+      isPrettierInstalled = false;
+    }
+  }
+
+  return isPrettierInstalled;
+}
