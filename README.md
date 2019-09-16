@@ -179,6 +179,47 @@ console.log(locals.someOtherClass);
 
 ![typed-css-modules](https://cloud.githubusercontent.com/assets/749171/16340497/c1cb6888-3a28-11e6-919b-f2f51a282bba.gif)
 
+## Upgrade from v1:
+- Update webpack config
+  - This package no longer replaces `css-loader`, but it has to be added alongside `css-loader`:
+  - `css-loader` is no longer a peer dependency due to the change above
+  - `css-loader` will need to be configured to output CSS Modules (e.g. `options: { modules: true; }`)
+```diff
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          "style-loader",
+          {
+            loader: "@teamsupercell/typings-for-css-modules-loader",
+            options: {
+              // pass all the options for `css-loader` to `css-loader`, eg.
+-             namedExport: true,
+-             modules: true
+            }
+          },
++         {
++           loader: "css-loader",
++           options: {
++             namedExport: true,
++             modules: true
++           }
++         },
+        ]
+      }
+    ]
+  }
+};
+```
+- Ensure all the typescript files import styles as default
+```diff
+- import * as styles from './styles.css';
++ import styles from './styles.css';
+```
+- Add `allowSyntheticDefaultImports` TypeScript compiler option if there are type errors related to default imports
+
 ## Support
 
 As the loader just acts as an intermediary it can handle all kind of css preprocessors (`sass`, `scss`, `stylus`, `less`, ...).
