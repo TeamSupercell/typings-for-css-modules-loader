@@ -203,7 +203,6 @@ module.exports = {
 +         {
 +           loader: "css-loader",
 +           options: {
-+             namedExport: true,
 +             modules: true
 +           }
 +         },
