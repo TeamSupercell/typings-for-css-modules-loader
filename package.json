@@ -34,9 +34,6 @@
     "typescript": "^3.5.3",
     "webpack": "^4.39.1"
   },
-  "peerDependencies": {
-    "css-loader": ">=0.28.11"
-  },
   "optionalDependencies": {
     "prettier": "*"
   },
