@@ -1,5 +1,6 @@
 // @ts-check
 const path = require("path");
+const camelCase = require("camelcase");
 
 /**
  * @param {string} content
@@ -22,10 +23,7 @@ const getCssModuleKeys = content => {
  * @param {string} filename
  */
 const filenameToInterfaceName = filename => {
-  return path
-    .basename(filename)
-    .replace(/^(\w)/, (_, c) => "I" + c.toUpperCase())
-    .replace(/\W+(\w)/g, (_, c) => c.toUpperCase());
+  return "I" + camelCase(path.basename(filename), { pascalCase: true });
 };
 
 /**
