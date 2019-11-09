@@ -217,7 +217,7 @@ module.exports = {
 - import * as styles from './styles.css';
 + import styles from './styles.css';
 ```
-- Add `allowSyntheticDefaultImports` TypeScript compiler option if there are type errors related to default imports
+- Add `esModuleInterop` TypeScript compiler option if there are type errors related to default imports
 
 ## Support
 
