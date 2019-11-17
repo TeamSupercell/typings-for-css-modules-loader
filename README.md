@@ -149,19 +149,26 @@ Imagine you have a file `~/my-project/src/component/MyComponent/myComponent.scss
 Adding the `typings-for-css-modules-loader` will generate a file `~/my-project/src/component/MyComponent/myComponent.scss.d.ts` that has the following content:
 
 ```ts
-export interface IMyComponentScss {
-  "some-class": string;
-  someOtherClass: string;
-  "some-class-sayWhat": string;
+declare namespace MyComponentScssModule {
+  export interface IMyComponentScss {
+    "some-class": string;
+    someOtherClass: string;
+    "some-class-sayWhat": string;
+  }
 }
 
-export const locals: IExampleCss;
-export default locals;
+declare const MyComponentScssModule: MyComponentScssModule.IMyComponentScss & {
+  /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
+  locals: MyComponentScssModule.IMyComponentScss;
+};
+
+export = MyComponentScssModule;
 ```
 
 ```ts
-// using default export when used with style-loader or mini-css-extract-plugin
-import styles from "./myComponent.scss";
+// using wildcard export when used with style-loader or mini-css-extract-plugin
+// or default export only when typescript `esModuleInterop` enabled
+import * as styles from "./myComponent.scss";
 
 console.log(styles["some-class"]);
 console.log(styles.someOtherClass);
@@ -212,12 +219,6 @@ module.exports = {
   }
 };
 ```
-- Ensure all the typescript files import styles as default
-```diff
-- import * as styles from './styles.css';
-+ import styles from './styles.css';
-```
-- Add `esModuleInterop` TypeScript compiler option if there are type errors related to default imports
 
 ## Support
 
