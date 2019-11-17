@@ -1,6 +1,6 @@
 // @ts-check
 const {
-  filenameToInterfaceName,
+  filenameToPascalCase,
   filenameToTypingsFilename,
   getCssModuleKeys,
   generateGenericExportInterface
@@ -67,10 +67,9 @@ module.exports = function(content, ...args) {
   const filename = this.resourcePath;
 
   const cssModuleInterfaceFilename = filenameToTypingsFilename(filename);
-  const interfaceName = filenameToInterfaceName(filename);
   const cssModuleDefinition = generateGenericExportInterface(
     cssModuleKeys,
-    interfaceName
+    filenameToPascalCase(filename)
   );
 
   applyFormattingAndOptions(cssModuleDefinition, options)

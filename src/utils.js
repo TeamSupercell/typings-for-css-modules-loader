@@ -22,17 +22,18 @@ const getCssModuleKeys = content => {
 /**
  * @param {string} filename
  */
-const filenameToInterfaceName = filename => {
-  return "I" + camelCase(path.basename(filename), { pascalCase: true });
+const filenameToPascalCase = filename => {
+  return camelCase(path.basename(filename), { pascalCase: true });
 };
 
 /**
  * @param {string[]} cssModuleKeys
+ * @param {string=} indent
  */
-const cssModuleToTypescriptInterfaceProperties = cssModuleKeys => {
+const cssModuleToTypescriptInterfaceProperties = (cssModuleKeys, indent) => {
   return [...cssModuleKeys]
     .sort()
-    .map(key => `  '${key}': string;`)
+    .map(key => `${indent || ""}'${key}': string;`)
     .join("\n");
 };
 
@@ -44,23 +45,33 @@ const filenameToTypingsFilename = filename => {
 
 /**
  * @param {string[]} cssModuleKeys
- * @param {string} interfaceName
+ * @param {string} pascalCaseFileName
  */
-const generateGenericExportInterface = (cssModuleKeys, interfaceName) => {
+const generateGenericExportInterface = (cssModuleKeys, pascalCaseFileName) => {
+  const interfaceName = `I${pascalCaseFileName}`;
+  const moduleName = `${pascalCaseFileName}Module`;
+
   const interfaceProperties = cssModuleToTypescriptInterfaceProperties(
-    cssModuleKeys
+    cssModuleKeys,
+    "    "
   );
-  return `export interface ${interfaceName} {
+  return `declare namespace ${moduleName} {
+  export interface I${pascalCaseFileName} {
 ${interfaceProperties}
+  }
 }
 
-export const locals: ${interfaceName};
-export default locals;`;
+declare const ${moduleName}: ${moduleName}.${interfaceName} & {
+  /** WARNING: Only available when \`css-loader\` is used without \`style-loader\` or \`mini-css-extract-plugin\` */
+  locals: ${moduleName}.${interfaceName};
+};
+
+export = ${moduleName};`;
 };
 
 module.exports = {
   getCssModuleKeys,
-  filenameToInterfaceName,
+  filenameToPascalCase,
   filenameToTypingsFilename,
   generateGenericExportInterface
 };
