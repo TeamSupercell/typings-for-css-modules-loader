@@ -6,6 +6,7 @@ const memoryfs = require("memory-fs");
 
 beforeEach(() => {
   jest.mock("../src/persist");
+  jest.mock("../src/verify");
 });
 
 it("default options", async () => {
@@ -14,6 +15,9 @@ it("default options", async () => {
   const persisteMock = jest.requireMock("../src/persist");
   expect(persisteMock).toBeCalledTimes(1);
   expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+
+  const verifyMock = jest.requireMock("../src/verify");
+  expect(verifyMock).toBeCalledTimes(0);
 });
 
 it("with sourcemap", async () => {
@@ -97,6 +101,20 @@ it("with banner", async () => {
   const persisteMock = jest.requireMock("../src/persist");
   expect(persisteMock).toBeCalledTimes(1);
   expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+});
+
+it("with verify only", async () => {
+  await runTest({
+    options: {
+      verifyOnly: true
+    }
+  });
+
+  const persisteMock = jest.requireMock("../src/persist");
+  expect(persisteMock).toBeCalledTimes(0);
+
+  const verifyMock = jest.requireMock("../src/verify");
+  expect(verifyMock).toBeCalledTimes(1);
 });
 
 async function runTest({ options = {}, cssLoaderOptions = {} } = {}) {

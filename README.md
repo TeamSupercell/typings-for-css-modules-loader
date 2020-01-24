@@ -38,11 +38,12 @@ module.exports = {
 
 ## Options
 
-|             Name              |    Type    | Description                                                                  |
-| :---------------------------: | :--------: | :--------------------------------------------------------------------------- |
-|    **[`banner`](#banner)**    | `{String}` | To add a 'banner' prefix to each generated `*.d.ts` file                     |
-| **[`formatter`](#formatter)** | `{String}` | Formats the generated `*.d.ts` file with specified formatter, eg. `prettier` |
-|       **[`eol`](#eol)**       | `{String}` | Newline character to be used in generated `*.d.ts` files                     |
+|             Name                        |    Type     | Description                                                                      |
+| :-------------------------------------: | :---------: | :------------------------------------------------------------------------------: |
+|         **[`banner`](#banner)**         | `{String}`  | To add a 'banner' prefix to each generated `*.d.ts` file                         |
+|      **[`formatter`](#formatter)**      | `{String}`  | Formats the generated `*.d.ts` file with specified formatter, eg. `prettier`     |
+|            **[`eol`](#eol)**            | `{String}`  | Newline character to be used in generated `*.d.ts` files                         |
+|     **[`verifyOnly`](#verifyOnly)**     | `{Boolean}` | Validate generated `*.d.ts` files and fail if an update is needed (useful in CI) |
 
 ### `banner`
 
@@ -103,7 +104,7 @@ module.exports = {
 
 ### `eol`
 
-"Newline character to be used in generated d.ts files. By default a value from `require('os').eol` is used.
+Newline character to be used in generated `*.d.ts` files. By default a value from `require('os').eol` is used.
 This option is ignored when [`formatter`](#formatter) `prettier` is used.
 
 ```js
@@ -117,6 +118,34 @@ module.exports = {
             loader: "@teamsupercell/typings-for-css-modules-loader",
             options: {
               eol: "\r\n"
+            }
+          },
+          {
+            loader: "css-loader",
+            options: { modules: true }
+          }
+        ]
+      }
+    ]
+  }
+};
+```
+
+### `verifyOnly`
+
+Validate generated `*.d.ts` files and fail if an update is needed (useful in CI).
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          {
+            loader: "@teamsupercell/typings-for-css-modules-loader",
+            options: {
+              verifyOnly: process.env.NODE_ENV === 'production'
             }
           },
           {
