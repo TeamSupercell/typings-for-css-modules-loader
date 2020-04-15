@@ -6,6 +6,7 @@ const {
   generateGenericExportInterface
 } = require("./utils");
 const persist = require("./persist");
+const verify = require("./verify");
 const { getOptions } = require("loader-utils");
 const validateOptions = require("schema-utils");
 
@@ -25,6 +26,11 @@ const schema = {
       description:
         "Possible options: none and prettier (requires prettier package installed). Defaults to prettier if `prettier` module can be resolved",
       enum: ["prettier", "none"]
+    },
+    verifyOnly: {
+      description:
+        "Validate generated `*.d.ts` files and fail if an update is needed (useful in CI). Defaults to `false`",
+      type: "boolean"
     }
   },
   additionalProperties: false
@@ -74,7 +80,11 @@ module.exports = function(content, ...args) {
 
   applyFormattingAndOptions(cssModuleDefinition, options)
     .then(output => {
-      persist(cssModuleInterfaceFilename, output);
+      if (options.verifyOnly === true) {
+        return verify(cssModuleInterfaceFilename, output);
+      } else {
+        persist(cssModuleInterfaceFilename, output);
+      }
     })
     .catch(err => {
       this.emitError(err);
