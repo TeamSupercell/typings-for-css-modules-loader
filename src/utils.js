@@ -50,20 +50,21 @@ const filenameToTypingsFilename = filename => {
 const generateGenericExportInterface = (cssModuleKeys, pascalCaseFileName) => {
   const interfaceName = `I${pascalCaseFileName}`;
   const moduleName = `${pascalCaseFileName}Module`;
+  const namespaceName = `${pascalCaseFileName}Namespace`;
 
   const interfaceProperties = cssModuleToTypescriptInterfaceProperties(
     cssModuleKeys,
     "    "
   );
-  return `declare namespace ${moduleName} {
+  return `declare namespace ${namespaceName} {
   export interface I${pascalCaseFileName} {
 ${interfaceProperties}
   }
 }
 
-declare const ${moduleName}: ${moduleName}.${interfaceName} & {
+declare const ${moduleName}: ${namespaceName}.${interfaceName} & {
   /** WARNING: Only available when \`css-loader\` is used without \`style-loader\` or \`mini-css-extract-plugin\` */
-  locals: ${moduleName}.${interfaceName};
+  locals: ${namespaceName}.${interfaceName};
 };
 
 export = ${moduleName};`;
