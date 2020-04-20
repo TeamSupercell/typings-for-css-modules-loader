@@ -44,6 +44,7 @@ module.exports = {
 |      **[`formatter`](#formatter)**      | `{String}`  | Formats the generated `*.d.ts` file with specified formatter, eg. `prettier`     |
 |            **[`eol`](#eol)**            | `{String}`  | Newline character to be used in generated `*.d.ts` files                         |
 |     **[`verifyOnly`](#verifyOnly)**     | `{Boolean}` | Validate generated `*.d.ts` files and fail if an update is needed (useful in CI) |
+|     **[`disableLocalsExport`](#disableLocalsExport)**     | `{Boolean}` | Disable the use of locals export. |
 
 ### `banner`
 
@@ -158,6 +159,35 @@ module.exports = {
   }
 };
 ```
+
+### `disableLocalsExport`
+
+Disable the use of locals export. Defaults to `false`.
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          {
+            loader: "@teamsupercell/typings-for-css-modules-loader",
+            options: {
+              disableLocalsExport: true
+            }
+          },
+          {
+            loader: "css-loader",
+            options: { modules: true }
+          }
+        ]
+      }
+    ]
+  }
+};
+```
+
 
 ## Example
 
