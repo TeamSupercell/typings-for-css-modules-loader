@@ -12,9 +12,9 @@ beforeEach(() => {
 it("default options", async () => {
   await runTest();
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 
   const verifyMock = jest.requireMock("../src/verify");
   expect(verifyMock).toBeCalledTimes(0);
@@ -27,9 +27,9 @@ it("with sourcemap", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 });
 
 it("no modules", async () => {
@@ -39,8 +39,8 @@ it("no modules", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(0);
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(0);
 });
 
 it("localsConvention asIs", async () => {
@@ -50,9 +50,9 @@ it("localsConvention asIs", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 });
 
 it("localsConvention camelCase", async () => {
@@ -62,9 +62,9 @@ it("localsConvention camelCase", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 });
 
 it("with prettier", async () => {
@@ -74,9 +74,9 @@ it("with prettier", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 });
 
 it("with no formatter", async () => {
@@ -86,9 +86,9 @@ it("with no formatter", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 });
 
 it("with banner", async () => {
@@ -98,9 +98,21 @@ it("with banner", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(1);
-  expect(persisteMock.mock.calls[0][1]).toMatchSnapshot();
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
+});
+
+it("with locals export disabled", async () => {
+  await runTest({
+    options: {
+      disableLocalsExport: true
+    }
+  });
+
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(1);
+  expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
 });
 
 it("with verify only", async () => {
@@ -110,8 +122,8 @@ it("with verify only", async () => {
     }
   });
 
-  const persisteMock = jest.requireMock("../src/persist");
-  expect(persisteMock).toBeCalledTimes(0);
+  const persistMock = jest.requireMock("../src/persist");
+  expect(persistMock).toBeCalledTimes(0);
 
   const verifyMock = jest.requireMock("../src/verify");
   expect(verifyMock).toBeCalledTimes(1);

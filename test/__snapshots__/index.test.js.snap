@@ -74,6 +74,21 @@ export = ExampleCssModule;
 "
 `;
 
+exports[`with locals export disabled 1`] = `
+"declare namespace ExampleCssNamespace {
+  export interface IExampleCss {
+    \\"bar-baz\\": string;
+    composed: string;
+    foo: string;
+  }
+}
+
+declare const ExampleCssModule: ExampleCssNamespace.IExampleCss;
+
+export = ExampleCssModule;
+"
+`;
+
 exports[`with no formatter 1`] = `
 "declare namespace ExampleCssNamespace {
   export interface IExampleCss {

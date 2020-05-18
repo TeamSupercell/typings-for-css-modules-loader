@@ -27,6 +27,11 @@ const schema = {
         "Possible options: none and prettier (requires prettier package installed). Defaults to prettier if `prettier` module can be resolved",
       enum: ["prettier", "none"]
     },
+    disableLocalsExport: {
+      description:
+        "Disable the use of locals export. Defaults to `false`",
+      type: "boolean"
+    },
     verifyOnly: {
       description:
         "Validate generated `*.d.ts` files and fail if an update is needed (useful in CI). Defaults to `false`",
@@ -75,7 +80,8 @@ module.exports = function(content, ...args) {
   const cssModuleInterfaceFilename = filenameToTypingsFilename(filename);
   const cssModuleDefinition = generateGenericExportInterface(
     cssModuleKeys,
-    filenameToPascalCase(filename)
+    filenameToPascalCase(filename),
+    options.disableLocalsExport
   );
 
   applyFormattingAndOptions(cssModuleDefinition, options)
