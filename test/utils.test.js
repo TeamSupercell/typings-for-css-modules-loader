@@ -1,5 +1,5 @@
 // @ts-check
-const { filenameToPascalCase } = require("../src/utils");
+const { filenameToPascalCase, getCssModuleKeys } = require("../src/utils");
 
 describe("filenameToPascalCase", () => {
   it("camelCase", () => {
@@ -20,5 +20,44 @@ describe("filenameToPascalCase", () => {
   it("_mixed-case", () => {
     const actual = filenameToPascalCase("_React-date_picker");
     expect(actual).toBe("ReactDatePicker");
+  });
+});
+
+describe("getCssModuleKeys", () => {
+  it("empty CSS module", () => {
+    const content = `
+      exports = module.exports = require("../node_modules/css-loader/dist/runtime/api.js")(false);
+      // Module
+      exports.push([module.id, "", ""]);
+    `;
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual([]);
+  });
+
+  it("CSS module with one class", () => {
+    const content = `exports.locals = {
+      "test": "test"
+    };`
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual(['test']);
+  });
+
+  it("CSS module with multiple classes", () => {
+    const content = `exports.locals = {
+      "test1": "test1",
+      "test2": "test2"
+    };`
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual(['test1', 'test2']);
+  });
+
+  it("CSS module with :root pseudo-class only", () => {
+    const content = `
+      exports = module.exports = require("../node_modules/css-loader/dist/runtime/api.js")(false);
+      // Module
+      exports.push([module.id, ":root {\n  --background: green; }\n", ""]);
+    `;
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual([]);
   });
 });
