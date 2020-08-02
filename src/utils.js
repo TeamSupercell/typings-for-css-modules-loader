@@ -7,7 +7,7 @@ const camelCase = require("camelcase");
  * @returns {string[]}
  */
 const getCssModuleKeys = content => {
-  const keyRegex = /"([^\\"]+)":/g;
+  const keyRegex = /"([\w-]+)":/g;
   let match;
   const cssModuleKeys = [];
 
