@@ -46,13 +46,22 @@ const filenameToTypingsFilename = filename => {
 /**
  * @param {string[]} cssModuleKeys
  * @param {string} pascalCaseFileName
+ * @param {string | boolean} disableLocalsExport
+ * @param {string | boolean} useDefaultExport
  */
-const generateGenericExportInterface = (cssModuleKeys, pascalCaseFileName, disableLocalsExport) => {
+const generateGenericExportInterface = (
+  cssModuleKeys,
+  pascalCaseFileName,
+  disableLocalsExport,
+  useDefaultExport
+) => {
   const interfaceName = `I${pascalCaseFileName}`;
   const moduleName = `${pascalCaseFileName}Module`;
   const namespaceName = `${pascalCaseFileName}Namespace`;
 
-  const localsExportType = disableLocalsExport ? `` : ` & {
+  const localsExportType = disableLocalsExport
+    ? ``
+    : ` & {
   /** WARNING: Only available when \`css-loader\` is used without \`style-loader\` or \`mini-css-extract-plugin\` */
   locals: ${namespaceName}.${interfaceName};
 }`;
@@ -69,7 +78,7 @@ ${interfaceProperties}
 
 declare const ${moduleName}: ${namespaceName}.${interfaceName}${localsExportType};
 
-export = ${moduleName};`;
+export ${useDefaultExport ? "default" : "="} ${moduleName};`;
 };
 
 module.exports = {
