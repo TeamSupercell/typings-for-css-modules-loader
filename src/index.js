@@ -36,6 +36,11 @@ const schema = {
         "Validate generated `*.d.ts` files and fail if an update is needed (useful in CI). Defaults to `false`",
       type: "boolean",
     },
+    prettierConfigFile: {
+      description:
+        "Path to prettier config file",
+      type: "string",
+    }
   },
   additionalProperties: false,
 };
@@ -114,7 +119,7 @@ async function applyFormattingAndOptions(cssModuleDefinition, options) {
     options.formatter === "prettier" ||
     (!options.formatter && canUsePrettier())
   ) {
-    cssModuleDefinition = await applyPrettier(cssModuleDefinition);
+    cssModuleDefinition = await applyPrettier(cssModuleDefinition, options);
   } else {
     // at very least let's ensure we're using OS eol if it's not provided
     cssModuleDefinition = cssModuleDefinition.replace(
@@ -128,12 +133,14 @@ async function applyFormattingAndOptions(cssModuleDefinition, options) {
 
 /**
  * @param {string} input
+ * @param {any} options
  * @returns {Promise<string>}
  */
-async function applyPrettier(input) {
+async function applyPrettier(input, options) {
   const prettier = require("prettier");
 
-  const config = await prettier.resolveConfig("./", {
+  const configPath = options.prettierConfigFile ? options.prettierConfigFile : "./";
+  const config = await prettier.resolveConfig(configPath,  {
     editorconfig: true,
   });
 
