@@ -37,7 +37,7 @@ const schema = {
         "Validate generated `*.d.ts` files and fail if an update is needed (useful in CI). Defaults to `false`",
       type: "boolean"
     }
-  },
+    },
   additionalProperties: false
 };
 
@@ -48,7 +48,7 @@ const configuration = {
 };
 
 /** @type {((this: import('webpack').loader.LoaderContext, ...args: any[]) => void) & {pitch?: import('webpack').loader.Loader['pitch']}} */
-module.exports = function(content, ...args) {
+module.exports = function (content, ...args) {
   const options = getOptions(this) || {};
 
   validateOptions(schema, options, configuration);
@@ -58,9 +58,12 @@ module.exports = function(content, ...args) {
   }
 
   // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
-  const cssModuleKeys = getCssModuleKeys(
-    content.substring(content.indexOf("exports.locals"))
-  );
+  // if we cannot find locals, then the module only contains global styles
+  const indexOfLocals = content.indexOf(".locals");
+  const cssModuleKeys =
+    indexOfLocals === -1
+      ? []
+      : getCssModuleKeys(content.substring(indexOfLocals));
 
   /** @type {any} */
   const callback = this.async();
