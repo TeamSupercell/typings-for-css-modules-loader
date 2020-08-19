@@ -1,6 +1,17 @@
 language: node_js
+
 node_js:
   - "10"
+
 branches:
   only:
     - master
+
+jobs:
+  include:
+    - install: npm ci
+    - install: npm install --no-shrinkwrap
+
+before_script:
+  - npm ls css-loader
+  - npm ls typescript

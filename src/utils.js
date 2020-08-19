@@ -6,7 +6,7 @@ const camelCase = require("camelcase");
  * @param {string} content
  * @returns {string[]}
  */
-const getCssModuleKeys = content => {
+const getCssModuleKeys = (content) => {
   const keyRegex = /"([\w-]+)":/g;
   let match;
   const cssModuleKeys = [];
@@ -22,7 +22,7 @@ const getCssModuleKeys = content => {
 /**
  * @param {string} filename
  */
-const filenameToPascalCase = filename => {
+const filenameToPascalCase = (filename) => {
   return camelCase(path.basename(filename), { pascalCase: true });
 };
 
@@ -33,11 +33,11 @@ const filenameToPascalCase = filename => {
 const cssModuleToTypescriptInterfaceProperties = (cssModuleKeys, indent) => {
   return [...cssModuleKeys]
     .sort()
-    .map(key => `${indent || ""}'${key}': string;`)
+    .map((key) => `${indent || ""}'${key}': string;`)
     .join("\n");
 };
 
-const filenameToTypingsFilename = filename => {
+const filenameToTypingsFilename = (filename) => {
   const dirName = path.dirname(filename);
   const baseName = path.basename(filename);
   return path.join(dirName, `${baseName}.d.ts`);
@@ -47,12 +47,18 @@ const filenameToTypingsFilename = filename => {
  * @param {string[]} cssModuleKeys
  * @param {string} pascalCaseFileName
  */
-const generateGenericExportInterface = (cssModuleKeys, pascalCaseFileName, disableLocalsExport) => {
+const generateGenericExportInterface = (
+  cssModuleKeys,
+  pascalCaseFileName,
+  disableLocalsExport
+) => {
   const interfaceName = `I${pascalCaseFileName}`;
   const moduleName = `${pascalCaseFileName}Module`;
   const namespaceName = `${pascalCaseFileName}Namespace`;
 
-  const localsExportType = disableLocalsExport ? `` : ` & {
+  const localsExportType = disableLocalsExport
+    ? ``
+    : ` & {
   /** WARNING: Only available when \`css-loader\` is used without \`style-loader\` or \`mini-css-extract-plugin\` */
   locals: ${namespaceName}.${interfaceName};
 }`;
@@ -76,5 +82,5 @@ module.exports = {
   getCssModuleKeys,
   filenameToPascalCase,
   filenameToTypingsFilename,
-  generateGenericExportInterface
+  generateGenericExportInterface,
 };

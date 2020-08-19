@@ -1,6 +1,6 @@
 // @ts-check
-const fs = require('fs');
-const util = require('util');
+const fs = require("fs");
+const util = require("util");
 const fsStat = util.promisify(fs.stat);
 const fsReadFile = util.promisify(fs.readFile);
 /**
@@ -10,18 +10,23 @@ const fsReadFile = util.promisify(fs.readFile);
  */
 module.exports = async (filename, content) => {
   const fileExists = await fsStat(filename)
-    .then(() => true).catch(() => false);
+    .then(() => true)
+    .catch(() => false);
 
   if (!fileExists) {
-    throw new Error(`Verification failed: Generated typings for css-module file '${filename}' is not found. ` +
-      "It typically happens when the generated typings were not committed.");
+    throw new Error(
+      `Verification failed: Generated typings for css-module file '${filename}' is not found. ` +
+        "It typically happens when the generated typings were not committed."
+    );
   }
 
-  const existingFileContent = await fsReadFile(filename, 'utf-8');
+  const existingFileContent = await fsReadFile(filename, "utf-8");
 
   // let's not fail the build if there are whitespace changes only
   if (existingFileContent.replace(/\s+/g, "") !== content.replace(/\s+/g, "")) {
-    throw new Error(`Verification failed: Generated typings for css-modules file '${filename}' is out of date. ` +
-      "It typically happens when the up-to-date generated typings are not committed.");
+    throw new Error(
+      `Verification failed: Generated typings for css-modules file '${filename}' is out of date. ` +
+        "It typically happens when the up-to-date generated typings are not committed."
+    );
   }
 };

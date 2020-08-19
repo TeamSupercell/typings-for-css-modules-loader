@@ -37,18 +37,18 @@ describe("getCssModuleKeys", () => {
   it("CSS module with one class", () => {
     const content = `exports.locals = {
       "test": "test"
-    };`
+    };`;
     const actual = getCssModuleKeys(content);
-    expect(actual).toEqual(['test']);
+    expect(actual).toEqual(["test"]);
   });
 
   it("CSS module with multiple classes", () => {
     const content = `exports.locals = {
       "test1": "test1",
       "test2": "test2"
-    };`
+    };`;
     const actual = getCssModuleKeys(content);
-    expect(actual).toEqual(['test1', 'test2']);
+    expect(actual).toEqual(["test1", "test2"]);
   });
 
   it("CSS module with :root pseudo-class only", () => {

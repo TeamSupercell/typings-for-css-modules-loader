@@ -3,7 +3,7 @@ const {
   filenameToPascalCase,
   filenameToTypingsFilename,
   getCssModuleKeys,
-  generateGenericExportInterface
+  generateGenericExportInterface,
 } = require("./utils");
 const persist = require("./persist");
 const verify = require("./verify");
@@ -16,39 +16,38 @@ const schema = {
     eol: {
       description:
         "Newline character to be used in generated d.ts files. Uses OS default. This option is overridden by the formatter option.",
-      type: "string"
+      type: "string",
     },
     banner: {
       description: "To add a 'banner' prefix to each generated `*.d.ts` file",
-      type: "string"
+      type: "string",
     },
     formatter: {
       description:
         "Possible options: none and prettier (requires prettier package installed). Defaults to prettier if `prettier` module can be resolved",
-      enum: ["prettier", "none"]
+      enum: ["prettier", "none"],
     },
     disableLocalsExport: {
-      description:
-        "Disable the use of locals export. Defaults to `false`",
-      type: "boolean"
+      description: "Disable the use of locals export. Defaults to `false`",
+      type: "boolean",
     },
     verifyOnly: {
       description:
         "Validate generated `*.d.ts` files and fail if an update is needed (useful in CI). Defaults to `false`",
-      type: "boolean"
-    }
+      type: "boolean",
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 /** @type {any} */
 const configuration = {
   name: "typings-for-css-modules-loader",
-  baseDataPath: "options"
+  baseDataPath: "options",
 };
 
 /** @type {((this: import('webpack').loader.LoaderContext, ...args: any[]) => void) & {pitch?: import('webpack').loader.Loader['pitch']}} */
-module.exports = function(content, ...args) {
+module.exports = function (content, ...args) {
   const options = getOptions(this) || {};
 
   validateOptions(schema, options, configuration);
@@ -58,9 +57,12 @@ module.exports = function(content, ...args) {
   }
 
   // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
-  const cssModuleKeys = getCssModuleKeys(
-    content.substring(content.indexOf("exports.locals"))
-  );
+  // if we cannot find locals, then the module only contains global styles
+  const indexOfLocals = content.indexOf(".locals");
+  const cssModuleKeys =
+    indexOfLocals === -1
+      ? []
+      : getCssModuleKeys(content.substring(indexOfLocals));
 
   /** @type {any} */
   const callback = this.async();
@@ -85,14 +87,14 @@ module.exports = function(content, ...args) {
   );
 
   applyFormattingAndOptions(cssModuleDefinition, options)
-    .then(output => {
+    .then((output) => {
       if (options.verifyOnly === true) {
         return verify(cssModuleInterfaceFilename, output);
       } else {
         persist(cssModuleInterfaceFilename, output);
       }
     })
-    .catch(err => {
+    .catch((err) => {
       this.emitError(err);
     })
     .then(successfulCallback);
@@ -132,7 +134,7 @@ async function applyPrettier(input) {
   const prettier = require("prettier");
 
   const config = await prettier.resolveConfig("./", {
-    editorconfig: true
+    editorconfig: true,
   });
 
   return prettier.format(
