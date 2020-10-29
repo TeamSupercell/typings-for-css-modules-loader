@@ -10,8 +10,12 @@ branches:
 jobs:
   include:
     - install: npm ci
-    - install: npm install --no-shrinkwrap
+      env: USING_PACKAGE_LOCK=true
+      cache: npm
+    - install: npm install
+      before_install: rm package-lock.json
+      env: USING_PACKAGE_LOCK=false
+      cache: false
 
 before_script:
-  - npm ls css-loader
-  - npm ls typescript
+  - npm ls --depth=0
