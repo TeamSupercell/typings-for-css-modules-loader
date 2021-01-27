@@ -70,4 +70,13 @@ describe("getCssModuleKeys", () => {
     const actual = getCssModuleKeys(content);
     expect(actual).toEqual(["øæå", "+~@", "f\\'o\\'o"]);
   });
+
+  it("CSS module with newline in class names should be ignored", () => {
+    const content = `.locals = {
+      "line1
+line2": "twolinesdoesnotmakesense"
+    };`;
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual([]);
+  });
 });
