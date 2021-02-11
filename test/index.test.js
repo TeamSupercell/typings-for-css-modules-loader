@@ -147,6 +147,23 @@ describe("css-loader@latest", () => {
     const verifyMock = jest.requireMock("../src/verify");
     expect(verifyMock).toBeCalledTimes(1);
   });
+
+  it("with named export", async () => {
+    await runTest({
+      options: {
+        namedExport: true,
+      },
+      cssLoaderOptions: {
+        modules: {
+          namedExport: true,
+        }
+      }
+    });
+
+    const persistMock = jest.requireMock("../src/persist");
+    expect(persistMock).toBeCalledTimes(1);
+    expect(persistMock.mock.calls[0][1]).toMatchSnapshot();
+  });
 });
 
 describe("css-loader@3", () => {
