@@ -46,6 +46,7 @@ module.exports = {
 |          **[`verifyOnly`](#verifyOnly)**          | `{Boolean}` | Validate generated `*.d.ts` files and fail if an update is needed (useful in CI) |
 | **[`disableLocalsExport`](#disableLocalsExport)** | `{Boolean}` |              Disable the use of locals export.               |
 | **[`prettierConfigFile`](#prettierConfigFile)**   | `{String}`  |                 Path to prettier config file                 |
+|        **[`namedExport`](#namedExport)**          | `{Boolean}` |              Interpret `namedExport` of css-loader.          |
 
 ### `banner`
 
@@ -217,6 +218,37 @@ module.exports = {
 };
 ```
 
+### `namedExport`
+
+Interpret `namedExport` of css-loader.
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          {
+            loader: "@teamsupercell/typings-for-css-modules-loader",
+            options: {
+              namedExport: true,
+            }
+          },
+          {
+            loader: "css-loader",
+            options: {
+              modules: {
+                namedExport: true,
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+};
+```
 
 
 ## Example

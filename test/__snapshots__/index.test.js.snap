@@ -283,3 +283,21 @@ declare const ExampleCssModule: ExampleCssNamespace.IExampleCss & {
 export = ExampleCssModule;
 "
 `;
+
+exports[`css-loader@latest with named export 1`] = `
+"declare namespace ExampleCssNamespace {
+  export interface IExampleCss {
+    barBaz: string;
+    composed: string;
+    foo: string;
+  }
+}
+
+declare const ExampleCssModule: ExampleCssNamespace.IExampleCss & {
+  /** WARNING: Only available when \`css-loader\` is used without \`style-loader\` or \`mini-css-extract-plugin\` */
+  locals: ExampleCssNamespace.IExampleCss;
+};
+
+export = ExampleCssModule;
+"
+`;

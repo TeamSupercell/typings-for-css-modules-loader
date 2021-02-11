@@ -2,7 +2,8 @@
 const {
   filenameToPascalCase,
   filenameToTypingsFilename,
-  getCssModuleKeys,
+  getCssModuleKeysForLocalExport,
+  getCssModuleKeysForNamedExport,
   generateGenericExportInterface,
 } = require("./utils");
 const persist = require("./persist");
@@ -40,6 +41,10 @@ const schema = {
       description:
         "Path to prettier config file",
       type: "string",
+    },
+    namedExport: {
+      description: "Interpret `namedExport` of css-loader",
+      type: "boolean",
     }
   },
   additionalProperties: false,
@@ -61,13 +66,21 @@ module.exports = function (content, ...args) {
     this.cacheable();
   }
 
-  // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
-  // if we cannot find locals, then the module only contains global styles
-  const indexOfLocals = content.indexOf(".locals");
-  const cssModuleKeys =
-    indexOfLocals === -1
-      ? []
-      : getCssModuleKeys(content.substring(indexOfLocals));
+  let cssModuleKeys = [];
+
+  if (options.namedExport) {
+    const indexOfExports = content.indexOf("// Exports");
+    if (indexOfExports !== -1) {
+      cssModuleKeys = getCssModuleKeysForNamedExport(content.substring(indexOfExports))
+    }
+  } else {
+    // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
+    // if we cannot find locals, then the module only contains global styles
+    const indexOfLocals = content.indexOf(".locals");
+    if (indexOfLocals !== -1) {
+      cssModuleKeys = getCssModuleKeysForLocalExport(content.substring(indexOfLocals));
+    }
+  }
 
   /** @type {any} */
   const callback = this.async();

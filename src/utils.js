@@ -3,11 +3,10 @@ const path = require("path");
 const camelCase = require("camelcase");
 
 /**
- * @param {string} content
- * @returns {string[]}
+ * @param {RegExp} keyRegex
+ * @returns {(content: string) => string[]}
  */
-const getCssModuleKeys = (content) => {
-  const keyRegex = /"([\w-]+)":/g;
+const getCssModuleKeys = (keyRegex) => (content) => {
   let match;
   const cssModuleKeys = [];
 
@@ -18,6 +17,12 @@ const getCssModuleKeys = (content) => {
   }
   return cssModuleKeys;
 };
+
+/** @type {(content: string) => string[]} */
+const getCssModuleKeysForLocalExport = getCssModuleKeys(/"([\w-]+)":/g);
+
+/** @type {(content: string) => string[]} */
+const getCssModuleKeysForNamedExport = getCssModuleKeys(/export const ([\w-]+) =/g);
 
 /**
  * @param {string} filename
@@ -79,7 +84,8 @@ export = ${moduleName};`;
 };
 
 module.exports = {
-  getCssModuleKeys,
+  getCssModuleKeysForLocalExport,
+  getCssModuleKeysForNamedExport,
   filenameToPascalCase,
   filenameToTypingsFilename,
   generateGenericExportInterface,
