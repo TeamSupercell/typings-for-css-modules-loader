@@ -31,10 +31,12 @@ const filenameToPascalCase = (filename) => {
  * @param {string=} indent
  */
 const cssModuleToTypescriptInterfaceProperties = (cssModuleKeys, indent) => {
-  return [...cssModuleKeys]
+  const properties = [...cssModuleKeys]
     .sort()
     .map((key) => `${indent || ""}'${key}': string;`)
-    .join("\n");
+
+  properties.push(`${indent || ""}[name: string]: string;`)
+  return properties.join("\n");
 };
 
 const filenameToTypingsFilename = (filename) => {
