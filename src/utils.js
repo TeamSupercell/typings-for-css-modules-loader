@@ -36,6 +36,7 @@ const cssModuleToTypescriptInterfaceProperties = (cssModuleKeys, indent) => {
     .map((key) => `${indent || ""}'${key}': string;`)
 
   properties.push(`${indent || ""}[name: string]: string;`)
+
   return properties.join("\n");
 };
 
