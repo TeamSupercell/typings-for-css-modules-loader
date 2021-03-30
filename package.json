@@ -4,7 +4,8 @@
   "description": "Webpack loader that generates TypeScript typings for CSS modules from css-loader on the fly",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "release": "release-it"
   },
   "author": "Tim Sebastian <tim.sebastian@gmail.com>",
   "license": "MIT",
@@ -33,6 +34,7 @@
     "eslint-config-prettier": "^6.0.0",
     "jest": "^24.9.0",
     "prettier": "*",
+    "release-it": "^14.5.0",
     "typescript": "^3.5.3",
     "webpack": "^4.39.1"
   },
