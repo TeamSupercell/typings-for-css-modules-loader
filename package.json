@@ -1,6 +1,6 @@
 {
   "name": "@teamsupercell/typings-for-css-modules-loader",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Webpack loader that generates TypeScript typings for CSS modules from css-loader on the fly",
   "main": "src/index.js",
   "scripts": {
