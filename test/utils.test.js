@@ -60,4 +60,23 @@ describe("getCssModuleKeys", () => {
     const actual = getCssModuleKeys(content);
     expect(actual).toEqual([]);
   });
+
+  it("CSS module with special class names", () => {
+    const content = `.locals = {
+      "øæå": "nordic",
+      "+~@": "special",
+      "f\\'o\\'o": "escaped",
+    };`;
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual(["øæå", "+~@", "f\\'o\\'o"]);
+  });
+
+  it("CSS module with newline in class names should be ignored", () => {
+    const content = `.locals = {
+      "line1
+line2": "twolinesdoesnotmakesense"
+    };`;
+    const actual = getCssModuleKeys(content);
+    expect(actual).toEqual([]);
+  });
 });
