@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       increment:
-        description: "Select increment (next version)"
+        description: "Select increment (patch, minor, major)"
         required: true
 
 jobs:
