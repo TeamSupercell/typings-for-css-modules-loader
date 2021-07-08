@@ -103,7 +103,8 @@ declare const ExampleCssModule: ExampleCssNamespace.IExampleCss & {
   locals: ExampleCssNamespace.IExampleCss;
 };
 
-export = ExampleCssModule;"
+export = ExampleCssModule;
+"
 `;
 
 exports[`css-loader@3 with prettier 1`] = `
@@ -245,7 +246,8 @@ declare const ExampleCssModule: ExampleCssNamespace.IExampleCss & {
   locals: ExampleCssNamespace.IExampleCss;
 };
 
-export = ExampleCssModule;"
+export = ExampleCssModule;
+"
 `;
 
 exports[`css-loader@latest with prettier 1`] = `
