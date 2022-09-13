@@ -93,7 +93,8 @@ module.exports = function (content, ...args) {
   const cssModuleDefinition = generateGenericExportInterface(
     cssModuleKeys,
     filenameToPascalCase(filename),
-    options.disableLocalsExport
+    options.disableLocalsExport,
+    options.lazy && filename.toLowerCase().includes('.lazy.')
   )
 
   applyFormattingAndOptions(cssModuleDefinition, options)

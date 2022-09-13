@@ -69,8 +69,8 @@ const generateGenericExportInterface = (
     "    "
   )
   const lz = lazy ? `
-use: () => void;
-unuse: () => void;
+    use: () => void;
+    unuse: () => void;
 `: ``
 
   return `declare namespace ${namespaceName} {

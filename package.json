@@ -1,6 +1,6 @@
 {
   "name": "typings-for-lazy-css-modules-loader",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "description": "Webpack loader that generates TypeScript typings for CSS modules from css-loader on the fly",
   "main": "src/index.js",
   "scripts": {
