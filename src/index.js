@@ -4,11 +4,11 @@ const {
   filenameToTypingsFilename,
   getCssModuleKeys,
   generateGenericExportInterface,
-} = require("./utils");
-const persist = require("./persist");
-const verify = require("./verify");
-const { getOptions } = require("loader-utils");
-const validateOptions = require("schema-utils");
+} = require("./utils")
+const persist = require("./persist")
+const verify = require("./verify")
+const { getOptions } = require("loader-utils")
+const validateOptions = require("schema-utils")
 
 const schema = {
   type: "object",
@@ -40,70 +40,75 @@ const schema = {
       description:
         "Path to prettier config file",
       type: "string",
+    },
+    lazy: {
+      description: "Emit 'use()' & 'unuse()' for *.lazy.css. Defaults to `true`",
+      type: "boolean",
     }
   },
   additionalProperties: false,
-};
+}
 
 /** @type {any} */
 const configuration = {
   name: "typings-for-css-modules-loader",
   baseDataPath: "options",
-};
+}
 
 /** @type {((this: import('webpack').loader.LoaderContext, ...args: any[]) => void) & {pitch?: import('webpack').loader.Loader['pitch']}} */
 module.exports = function (content, ...args) {
-  const options = getOptions(this) || {};
+  const options = getOptions(this) || {}
+  if (typeof options.lazy === 'undefined') options.lazy = true
 
-  validateOptions(schema, options, configuration);
+  validateOptions(schema, options, configuration)
 
   if (this.cacheable) {
-    this.cacheable();
+    this.cacheable()
   }
 
   // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
   // if we cannot find locals, then the module only contains global styles
-  const indexOfLocals = content.indexOf(".locals");
+  const indexOfLocals = content.indexOf(".locals")
   const cssModuleKeys =
     indexOfLocals === -1
       ? []
-      : getCssModuleKeys(content.substring(indexOfLocals));
+      : getCssModuleKeys(content.substring(indexOfLocals))
 
   /** @type {any} */
-  const callback = this.async();
+  const callback = this.async()
 
   const successfulCallback = () => {
-    callback(null, content, ...args);
-  };
+    callback(null, content, ...args)
+  }
 
   if (cssModuleKeys.length === 0) {
     // no css module output found
-    successfulCallback();
-    return;
+    successfulCallback()
+    return
   }
 
-  const filename = this.resourcePath;
+  const filename = this.resourcePath
 
-  const cssModuleInterfaceFilename = filenameToTypingsFilename(filename);
+  const cssModuleInterfaceFilename = filenameToTypingsFilename(filename)
   const cssModuleDefinition = generateGenericExportInterface(
     cssModuleKeys,
     filenameToPascalCase(filename),
     options.disableLocalsExport
-  );
+  )
 
   applyFormattingAndOptions(cssModuleDefinition, options)
     .then((output) => {
       if (options.verifyOnly === true) {
-        return verify(cssModuleInterfaceFilename, output);
+        return verify(cssModuleInterfaceFilename, output)
       } else {
-        persist(cssModuleInterfaceFilename, output);
+        persist(cssModuleInterfaceFilename, output)
       }
     })
     .catch((err) => {
-      this.emitError(err);
+      this.emitError(err)
     })
-    .then(successfulCallback);
-};
+    .then(successfulCallback)
+}
 
 /**
  * @param {string} cssModuleDefinition
@@ -112,23 +117,23 @@ module.exports = function (content, ...args) {
 async function applyFormattingAndOptions(cssModuleDefinition, options) {
   if (options.banner) {
     // Prefix banner to CSS module
-    cssModuleDefinition = options.banner + "\n" + cssModuleDefinition;
+    cssModuleDefinition = options.banner + "\n" + cssModuleDefinition
   }
 
   if (
     options.formatter === "prettier" ||
     (!options.formatter && canUsePrettier())
   ) {
-    cssModuleDefinition = await applyPrettier(cssModuleDefinition, options);
+    cssModuleDefinition = await applyPrettier(cssModuleDefinition, options)
   } else {
     // at very least let's ensure we're using OS eol if it's not provided
     cssModuleDefinition = cssModuleDefinition.replace(
       /\r?\n/g,
       options.eol || require("os").EOL
-    );
+    )
   }
 
-  return cssModuleDefinition;
+  return cssModuleDefinition
 }
 
 /**
@@ -137,32 +142,32 @@ async function applyFormattingAndOptions(cssModuleDefinition, options) {
  * @returns {Promise<string>}
  */
 async function applyPrettier(input, options) {
-  const prettier = require("prettier");
+  const prettier = require("prettier")
 
-  const configPath = options.prettierConfigFile ? options.prettierConfigFile : "./";
-  const config = await prettier.resolveConfig(configPath,  {
+  const configPath = options.prettierConfigFile ? options.prettierConfigFile : "./"
+  const config = await prettier.resolveConfig(configPath, {
     editorconfig: true,
-  });
+  })
 
   return prettier.format(
     input,
     Object.assign({}, config, { parser: "typescript" })
-  );
+  )
 }
 
-let isPrettierInstalled;
+let isPrettierInstalled
 /**
  * @returns {boolean}
  */
 function canUsePrettier() {
   if (typeof isPrettierInstalled !== "boolean") {
     try {
-      require.resolve("prettier");
-      isPrettierInstalled = true;
+      require.resolve("prettier")
+      isPrettierInstalled = true
     } catch (_) {
-      isPrettierInstalled = false;
+      isPrettierInstalled = false
     }
   }
 
-  return isPrettierInstalled;
+  return isPrettierInstalled
 }

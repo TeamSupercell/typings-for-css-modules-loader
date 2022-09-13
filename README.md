@@ -46,7 +46,7 @@ module.exports = {
 |          **[`verifyOnly`](#verifyOnly)**          | `{Boolean}` | Validate generated `*.d.ts` files and fail if an update is needed (useful in CI) |
 | **[`disableLocalsExport`](#disableLocalsExport)** | `{Boolean}` |              Disable the use of locals export.               |
 | **[`prettierConfigFile`](#prettierConfigFile)**   | `{String}`  |                 Path to prettier config file                 |
-
+| **[`lazy`](#lazy)**                               | `{boolean}` |  Emit 'use()' & 'unuse()' for *.lazy.css. Defaults to `true` |
 ### `banner`
 
 To add a "banner" prefix to each generated `*.d.ts` file, you can pass a string to this option as shown below. The prefix is quite literally prefixed into the generated file, so please ensure it conforms to the type definition syntax.
