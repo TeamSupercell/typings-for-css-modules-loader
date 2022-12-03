@@ -5,3 +5,4 @@ bundle.js
 example*.css.d.ts
 *.log
 .npmrc
+.idea/
