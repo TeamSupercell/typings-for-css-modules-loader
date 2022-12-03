@@ -349,3 +349,19 @@ It is possible to write a custom webpack plugin using the `fork-ts-checker-servi
 [build-url]: https://travis-ci.com/TeamSupercell/typings-for-css-modules-loader
 [deps]: https://david-dm.org/@teamsupercell/typings-for-css-modules-loader.svg
 [deps-url]: https://david-dm.org/@teamsupercell/typings-for-css-modules-loader
+
+### Error during `npm install` or `npm run test` encountered: "digital envelope routines::unsupported"
+On node version >=17, the following error message may be encountered:
+
+   "digital envelope routines::unsupported"
+
+To get around this, use--
+```bash
+  export NODE_OPTIONS=--openssl-legacy-provider && npm install
+```
+or...
+```bash
+  export NODE_OPTIONS=--openssl-legacy-provider && npm run test
+```
+
+
