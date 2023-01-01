@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "camelcase": "^5.3.1",
-    "loader-utils": "1.2.3",
+    "loader-utils": "3.2.1",
     "schema-utils": "^2.0.1"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "prettier": "*",
     "release-it": "^14.5.0",
     "typescript": "^3.5.3",
-    "webpack": "^4.39.1"
+    "webpack": "^5.75.0"
   },
   "optionalDependencies": {
     "prettier": "*"
