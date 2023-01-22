@@ -3,6 +3,7 @@ const {
   filenameToPascalCase,
   filenameToTypingsFilename,
   getCssModuleKeys,
+  getNamedExports,
   generateGenericExportInterface,
 } = require("./utils");
 const persist = require("./persist");
@@ -63,9 +64,12 @@ module.exports = function (content, ...args) {
 
   // let's only check `exports.locals` for keys to avoid getting keys from the sourcemap when it's enabled
   // if we cannot find locals, then the module only contains global styles
+  const isModule = /(?:^|\n)export\s+(?:var|let|const)\s+\S+\s*=/g.test(content)
   const indexOfLocals = content.indexOf(".locals");
   const cssModuleKeys =
-    indexOfLocals === -1
+    isModule
+      ? getNamedExports(content)
+      : indexOfLocals === -1
       ? []
       : getCssModuleKeys(content.substring(indexOfLocals));
 

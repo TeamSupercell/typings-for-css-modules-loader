@@ -19,6 +19,19 @@ const getCssModuleKeys = (content) => {
   return cssModuleKeys;
 };
 
+const getNamedExports = (content) => {
+  const exportRegex = /(?:^|\n)export\s+(?:var|let|const)\s+(\S+?)\s*=/g;
+  let match;
+  const namedExports = [];
+
+  while ((match = exportRegex.exec(content))) {
+    if (namedExports.indexOf(match[1]) < 0) {
+      namedExports.push(match[1]);
+    }
+  }
+  return namedExports;
+};
+
 /**
  * @param {string} filename
  */
@@ -80,6 +93,7 @@ export = ${moduleName};`;
 
 module.exports = {
   getCssModuleKeys,
+  getNamedExports,
   filenameToPascalCase,
   filenameToTypingsFilename,
   generateGenericExportInterface,
