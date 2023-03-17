@@ -121,6 +121,8 @@ async function applyFormattingAndOptions(cssModuleDefinition, options) {
   ) {
     cssModuleDefinition = await applyPrettier(cssModuleDefinition, options);
   } else {
+    cssModuleDefinition += "\n";
+
     // at very least let's ensure we're using OS eol if it's not provided
     cssModuleDefinition = cssModuleDefinition.replace(
       /\r?\n/g,
