@@ -2,7 +2,7 @@
 /// <reference types="jest" />
 const webpack = require("webpack");
 const path = require("path");
-const memoryfs = require("memory-fs");
+const { Volume } = require("memfs");
 
 beforeEach(() => {
   jest.mock("../src/persist");
@@ -319,7 +319,7 @@ function createTestRunner(cssLoaderModule = "css-loader") {
       mode: "none",
     });
 
-    compiler.outputFileSystem = new memoryfs();
+    compiler.outputFileSystem = new Volume();
 
     /** @type {webpack.Stats} */
     const stats = await new Promise((resolve, reject) => {
