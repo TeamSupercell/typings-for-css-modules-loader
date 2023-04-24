@@ -50,7 +50,8 @@ const filenameToTypingsFilename = (filename) => {
 const generateGenericExportInterface = (
   cssModuleKeys,
   pascalCaseFileName,
-  disableLocalsExport
+  disableLocalsExport,
+  enableDefaultExport
 ) => {
   const interfaceName = `I${pascalCaseFileName}`;
   const moduleName = `${pascalCaseFileName}Module`;
@@ -75,7 +76,7 @@ ${interfaceProperties}
 
 declare const ${moduleName}: ${namespaceName}.${interfaceName}${localsExportType};
 
-export = ${moduleName};`;
+export ${enableDefaultExport ? 'default' : '='} ${moduleName};`;
 };
 
 module.exports = {

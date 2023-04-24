@@ -31,6 +31,10 @@ const schema = {
       description: "Disable the use of locals export. Defaults to `false`",
       type: "boolean",
     },
+    enableDefaultExport: {
+      description: "Enable 'export default'. Defaults to `false`.",
+      type: "boolean",
+    },
     verifyOnly: {
       description:
         "Validate generated `*.d.ts` files and fail if an update is needed (useful in CI). Defaults to `false`",
@@ -88,7 +92,8 @@ module.exports = function (content, ...args) {
   const cssModuleDefinition = generateGenericExportInterface(
     cssModuleKeys,
     filenameToPascalCase(filename),
-    options.disableLocalsExport
+    options.disableLocalsExport,
+    options.enableDefaultExport
   );
 
   applyFormattingAndOptions(cssModuleDefinition, options)
